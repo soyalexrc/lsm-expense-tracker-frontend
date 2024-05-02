@@ -10,6 +10,7 @@ import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import AuthLayout from "@/common/layouts/AuthLayout.tsx";
 import ExpensesPage from "@/features/dashboard/expenses/Expenses.tsx";
 import ExpenseDetailPage from "@/features/dashboard/expenses/ExpenseDetail.tsx";
+import SettingsPage from "@/features/settings/Settings.tsx";
 
 const router = createBrowserRouter([
     {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
                 path: "/",
                 children: [
                     { path: "/", element: <DashboardPage /> },
+                    { path: "/settings", element: <SettingsPage /> },
                     { path: "/expenses", element: <ExpensesPage /> },
                     { path: "/expenses/:id", element: <ExpenseDetailPage /> },
                 ]

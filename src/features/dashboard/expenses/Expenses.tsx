@@ -11,6 +11,7 @@ export default function ExpensesPage() {
 
     const {error, data, isLoading} = useQuery({
         queryKey: ['expenses'],
+        staleTime: 0,
         queryFn: () => getExpensesByUserId(token!)
     })
 

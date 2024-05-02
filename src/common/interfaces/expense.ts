@@ -7,6 +7,7 @@ export interface Expense  {
     description: string;
     category: Category;
     userId: string;
+    paymentMethod: string
 }
 
 export interface CreateExpense {
@@ -16,6 +17,7 @@ export interface CreateExpense {
     description: string;
     category: string;
     userId: string | null | undefined;
+    paymentMethod: string;
 }
 
 export interface Category {

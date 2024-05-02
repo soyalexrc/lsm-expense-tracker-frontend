@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useAuth, UserButton} from "@clerk/clerk-react"
 import {Outlet, useNavigate, Link, useLocation} from "react-router-dom"
-import {HandCoins, Home, Menu, Search} from "lucide-react";
+import {HandCoins, Home, Menu, Search, Settings} from "lucide-react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
@@ -25,6 +25,11 @@ const links: LinkType[] = [
         title: 'Expenses',
         route: '/expenses',
         icon: <HandCoins className="h-4 w-4"/>
+    },
+    {
+        title: 'Settings',
+        route: '/settings',
+        icon: <Settings className="h-4 w-4"/>
     },
 ]
 
