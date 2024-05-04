@@ -26,12 +26,18 @@ export interface Category {
     description: string;
 }
 
-export interface GetStatsResult {
+export interface GetTotalsResult {
     totalAmount: number
-    totalAmountByCategory: TotalAmountByCategory[]
+    totalAmountByCategory: TotalAmountByCategory[],
+    totalAmountByDay: TotalAmountByDay[]
 }
 
 export interface TotalAmountByCategory {
     totalAmount: number;
     category: string
+}
+
+export interface TotalAmountByDay {
+    totalAmount: number;
+    date: string
 }

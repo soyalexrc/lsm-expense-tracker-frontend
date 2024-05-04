@@ -1,5 +1,5 @@
 import axios from '@/lib/helpers/axios-config.ts';
-import {CreateExpense, Expense, GetStatsResult} from "@/common/interfaces/expense.ts";
+import {CreateExpense, Expense, GetTotalsResult} from "@/common/interfaces/expense.ts";
 import {toast} from "sonner";
 export async function getExpensesByUserId(userId: string) {
     return await axios.post<Expense[]>('/expense/GetByUserId', {userId}).then(data => data.data);
@@ -52,6 +52,6 @@ export async function deleteExpense(id: string) {
     }
 }
 
-export async function getStats(payload: { userId: string, dateFrom: string; dateTo: string }) {
-    return await axios.post<GetStatsResult>('/expense/GetStats', payload).then(data => data.data);
+export async function getTotals(payload: { userId: string, dateFrom: string; dateTo: string }) {
+    return await axios.post<GetTotalsResult>('/expense/GetTotals', payload).then(data => data.data);
 }
