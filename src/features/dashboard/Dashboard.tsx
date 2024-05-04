@@ -22,7 +22,6 @@ import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group.tsx";
 export default function DashboardPage() {
     const {userId} = useAuth();
     const [date, setDate] = useState<DateRange | undefined>(undefined)
-    const [displayType, setDisplayType] = useState<'chart' | 'grid'>('grid');
     const [drawerState, setDrawerState] = useState<boolean>(false);
     const {error, data, isLoading, refetch} = useQuery({
         queryKey: ['stats'],
@@ -54,7 +53,7 @@ export default function DashboardPage() {
                             <DrawerTitle>Filter by date range</DrawerTitle>
                             <DrawerDescription>To see more specific data.</DrawerDescription>
                         </DrawerHeader>
-                        <DatePicker className='' setDate={setDate} date={date} />
+                        <DatePicker className='' setDate={setDate} date={date}/>
                         <DrawerFooter>
                             <Button onClick={submitFilters}>Submit</Button>
                             <DrawerClose asChild>
@@ -65,35 +64,12 @@ export default function DashboardPage() {
                 </DrawerContent>
             </Drawer>
             <div className={' p-4'}>
-                <div className={'flex justify-between'}>
-                    <div>
-                        <p className={'text-sm text-gray-500 font-bold mb-2'}>Total overall</p>
-                        <h2 className='text-6xl text-red-600 font-bold'>$ {data?.totalAmount.toFixed(2)}</h2>
-                    </div>
-                    <ToggleGroup type="single" value={displayType}>
-                        <ToggleGroupItem value="chart" onClick={() => setDisplayType('chart')}>Chart</ToggleGroupItem>
-                        <ToggleGroupItem value="grid" onClick={() => setDisplayType('grid')}>Grid</ToggleGroupItem>
-                    </ToggleGroup>
-                </div>
-
-             </div>
-            {
-                displayType === 'grid' ?
-                    <div className='grid grid-cols-4 gap-2 my-5'>
-                        {
-                            data?.totalAmountByCategory.map(total => (
-                                <div className=' p-4 shadow border rounded-sm flex flex-col justify-center'>
-                                    <p className={'text-lg font-bold text-gray-500 leading-0'}>{total.category}</p>
-                                    <p className='font-bold text-3xl'>$ {total.totalAmount.toFixed(2)}</p>
-                                </div>
-                            ))
-                        }
-                    </div>
-                    : <div className={'shadow border rounded-sm p-5 w-[920px] h-[450px]'}>
-                        <SampleChart data={data!.totalAmountByCategory}/>
-                    </div>
-            }
-
+                <p className={'text-sm text-gray-500 font-bold mb-2'}>Total overall</p>
+                <h2 className='text-6xl text-red-600 font-bold'>$ {data?.totalAmount.toFixed(2)}</h2>
+            </div>
+            <div className={'shadow border rounded-sm p-5 w-full h-[450px]'}>
+                <SampleChart data={data!.totalAmountByCategory}/>
+            </div>
         </div>
     );
 }
