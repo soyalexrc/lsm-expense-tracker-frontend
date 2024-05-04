@@ -40,7 +40,6 @@ const formSchema = z.object({
 })
 
 export default function ExpenseDetailPage() {
-    const token = sessionStorage.getItem('token');
     const { id } = useParams();
     const { userId } = useAuth();
     const navigate = useNavigate();
@@ -48,24 +47,24 @@ export default function ExpenseDetailPage() {
 
     const {error: categoriesError, data: categories, isLoading: categoriesLoading} = useQuery({
         queryKey: ['categories'],
-        queryFn: () => getCategories(token!)
+        queryFn: () => getCategories()
     });
     const {error, data, isLoading} = useQuery({
         queryKey: ['expense'],
         enabled: id !== 'null',
-        queryFn: () => getExpenseById(id!, token!)
+        queryFn: () => getExpenseById(id!)
     })
     const {error: usError, data: usData, isLoading: usLoading} = useQuery({
         queryKey: ['userSettings'],
-        queryFn: () => getUserSettingsByUserId(token!)
+        queryFn: () => getUserSettingsByUserId(userId!)
     })
     const updateExpenseMutation = useMutation({
-        mutationFn: (expense: CreateExpense) => updateExpense(id!, token!, expense),
+        mutationFn: (expense: CreateExpense) => updateExpense(id!, expense, () => navigate(-1)),
         onSuccess: () => onSuccessMutation()
     })
 
     const createExpenseMutation = useMutation({
-        mutationFn: (expense: CreateExpense) => createExpense(token!, expense),
+        mutationFn: (expense: CreateExpense) => createExpense( expense, () => navigate(-1)),
         onSuccess: () => onSuccessMutation()
     })
 
@@ -148,7 +147,7 @@ export default function ExpenseDetailPage() {
                     </CardHeader>}
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-end gap-4">
                                 <FormField
                                     control={form.control}
                                     name="title"

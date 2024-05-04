@@ -4,14 +4,17 @@ import {Category, Expense} from "@/common/interfaces/expense.ts";
 import {format} from "date-fns";
 import {Badge} from "@/components/ui/badge.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {MoreHorizontal} from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.tsx";
+import { Pencil, Trash2} from "lucide-react";
 import {useNavigate} from "react-router-dom";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent, AlertDialogTitle, AlertDialogTrigger
+} from "@/components/ui/alert-dialog.tsx";
+import {useQueryClient} from "react-query";
+import {deleteExpense} from "@/api/expenses.tsx";
 
 
 export const columns: ColumnDef<Expense>[] = [
@@ -49,28 +52,47 @@ export const columns: ColumnDef<Expense>[] = [
         id: "actions",
         cell: ({ row }) => {
             const expense = row.original
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const navigate = useNavigate();
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const queryClient = useQueryClient();
+
+            async function handleDelete(id: string) {
+                try {
+                    await deleteExpense(id).then(() => {
+                        queryClient.fetchQuery('expenses');
+                    })
+                }catch (e) {
+                    console.log(e);
+                }
+            }
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(expense._id)}
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigate(`/expenses/${expense._id}`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className='flex items-center gap-3'>
+                    <Button onClick={() => navigate(`/expenses/${expense._id}`)} variant="outline" size="sm">
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                <Trash2 className='h-4 w-4'/>
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete your
+                                    account and remove your data from our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(row.original._id)}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
             )
         },
     },

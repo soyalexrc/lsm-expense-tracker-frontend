@@ -2,13 +2,14 @@ import {useQuery} from "react-query";
 import {getUserSettingsByUserId} from "@/api/user-settings.ts";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircle} from "lucide-react";
+import {useAuth} from "@clerk/clerk-react";
 
 export default function SettingsPage() {
-    const token = sessionStorage.getItem('token');
+    const { userId } = useAuth();
 
     const {error, data, isLoading} = useQuery({
         queryKey: ['userSettings'],
-        queryFn: () => getUserSettingsByUserId(token!)
+        queryFn: () => getUserSettingsByUserId(userId!)
     })
 
     if (isLoading) return 'Loading...'

@@ -1,11 +1,10 @@
 import * as React from 'react'
 import {useAuth, UserButton} from "@clerk/clerk-react"
 import {Outlet, useNavigate, Link, useLocation} from "react-router-dom"
-import {HandCoins, Home, Menu, Search, Settings} from "lucide-react";
+import {HandCoins, Home, Menu, Settings} from "lucide-react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
-import {Input} from "@/components/ui/input.tsx";
 
 
 
@@ -34,20 +33,15 @@ const links: LinkType[] = [
 ]
 
 export default function DashboardLayout() {
-    const { isSignedIn, isLoaded, getToken } = useAuth()
+    const { isSignedIn, isLoaded } = useAuth()
     const navigate = useNavigate()
     const {pathname} = useLocation();
 
-    async function manageToken() {
-        const token = await getToken();
-        sessionStorage.setItem('token', token!);
-    }
 
     React.useEffect(() => {
         if (isLoaded && !isSignedIn) {
             navigate("/auth/sign-in")
         }
-        manageToken();
     }, [isLoaded])
 
     if (!isLoaded) return "Loading..."
@@ -151,18 +145,7 @@ export default function DashboardLayout() {
                             </div>
                         </SheetContent>
                     </Sheet>
-                    <div className="w-full flex-1">
-                        <form>
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
-                                <Input
-                                    type="search"
-                                    placeholder="Search expenses..."
-                                    className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                                />
-                            </div>
-                        </form>
-                    </div>
+                    <div className="w-full flex-1" />
                     <UserButton/>
                 </header>
                 <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">

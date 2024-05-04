@@ -1,7 +1,7 @@
 import {Outlet} from 'react-router-dom'
 import {ClerkProvider} from '@clerk/clerk-react'
 import {cn} from "@/lib/utils.ts";
-import {Toaster} from "@/components/ui/toaster.tsx";
+import {Toaster} from "@/components/ui/sonner.tsx";
 import {QueryClient, QueryClientProvider} from "react-query";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY

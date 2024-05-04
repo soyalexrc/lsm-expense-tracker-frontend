@@ -1,37 +1,48 @@
 import axios from '@/lib/helpers/axios-config.ts';
-import {CreateExpense, Expense} from "@/common/interfaces/expense.ts";
-import {toast} from "@/components/ui/use-toast.ts";
-export async function getExpensesByUserId(token: string) {
-    return await axios.post<Expense[]>('/expense/GetByUserId', {token}).then(data => data.data);
+import {CreateExpense, Expense, GetStatsResult} from "@/common/interfaces/expense.ts";
+import {toast} from "sonner";
+export async function getExpensesByUserId(userId: string) {
+    return await axios.post<Expense[]>('/expense/GetByUserId', {userId}).then(data => data.data);
 }
 
-export async function getExpenseById(id: string, token: string): Promise<Expense> {
-    console.log('expense by id')
-    return await axios.post<Expense>(`/expense/GetById/${id}`, {token}).then(data => data.data);
+export async function getExpenseById(id: string): Promise<Expense> {
+    return await axios.post<Expense>(`/expense/GetById/${id}`).then(data => data.data);
 }
 
-export async function updateExpense(id: string, token: string, expense: CreateExpense) {
-    const {data} = await axios.patch(`/expense/${id}`, {token, ...expense});
-    toast({
-        title: "Expense updated!",
-        description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(expense, null, 2)}</code>
-            </pre>
-        ),
+export async function updateExpense(id: string, expense: CreateExpense, reviewFn: () => void) {
+    const {data} = await axios.patch(`/expense/${id}`, expense);
+    toast("Expense updated!", {
+        action: {
+            label: 'Review',
+            onClick: reviewFn,
+        }
     });
     return data;
 }
 
 
-export async function createExpense(token: string, expense: CreateExpense) {
+export async function createExpense(expense: CreateExpense, reviewFn: () => void) {
     try {
-        const {data} = await axios.post(`/expense`, {token, ...expense});
-        toast({
-            title: "Expense registered!",
+        const {data} = await axios.post(`/expense`, expense);
+        toast("Expense registered!", {
+            action: {
+                label: 'Review',
+                onClick: reviewFn,
+            }
+        });
+        return data;
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+export async function deleteExpense(id: string) {
+    try {
+        const {data} = await axios.delete(`/expense/${id}`);
+        toast("Expense deleted!", {
             description: (
                 <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <code className="text-white">{JSON.stringify(expense, null, 2)}</code>
+                <code className="text-white">{JSON.stringify({message: 'deleted successfully'}, null, 2)}</code>
                 </pre>
             ),
         });
@@ -39,4 +50,8 @@ export async function createExpense(token: string, expense: CreateExpense) {
     } catch (e) {
         console.log(e);
     }
+}
+
+export async function getStats(payload: { userId: string, dateFrom: string; dateTo: string }) {
+    return await axios.post<GetStatsResult>('/expense/GetStats', payload).then(data => data.data);
 }

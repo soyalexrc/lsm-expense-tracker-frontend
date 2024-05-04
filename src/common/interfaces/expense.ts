@@ -25,3 +25,13 @@ export interface Category {
     title: string;
     description: string;
 }
+
+export interface GetStatsResult {
+    totalAmount: number
+    totalAmountByCategory: TotalAmountByCategory[]
+}
+
+export interface TotalAmountByCategory {
+    totalAmount: number;
+    category: string
+}
