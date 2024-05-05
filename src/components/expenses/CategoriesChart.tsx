@@ -1,7 +1,6 @@
 import {PieChart, Pie, Cell, Tooltip} from 'recharts';
 import {TotalAmountByCategory} from "@/common/interfaces/expense.ts";
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export default function CategoriesChart({ data }: { data: TotalAmountByCategory[] }) {
 
@@ -16,10 +15,9 @@ export default function CategoriesChart({ data }: { data: TotalAmountByCategory[
                     fill="#8884d8"
                     paddingAngle={5}
                     dataKey="value"
-                    label
                 >
                     {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}  />
+                        <Cell key={`cell-${index}`} fill={entry.color}  />
                     ))}
                 </Pie>
                 <Tooltip />

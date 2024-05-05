@@ -14,8 +14,9 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select.tsx";
-import CustomLineChart from "@/components/expenses/CustomLineChart.tsx";
+import DateBasedChart from "@/components/expenses/DateBasedChart.tsx";
 import CategoriesChart from "@/components/expenses/CategoriesChart.tsx";
+import PaymentMethodsChart from "@/components/expenses/PaymentMethodsChart.tsx";
 
 
 export default function DashboardPage() {
@@ -122,16 +123,35 @@ export default function DashboardPage() {
             </div>
             {
                 data?.totalAmountByDay && data.totalAmountByDay.length > 0 &&
-                <>
                     <div className={'shadow border rounded-sm p-5 w-full h-[450px]'}>
-                        <CustomLineChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
+                        <DateBasedChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
                     </div>
-                    <div className={'shadow border rounded-sm p-5 w-[550px] h-[500px]'}>
+            }
+            <div className="grid grid-cols-7 gap-5">
+                {
+                    data?.totalAmountByCategory && data.totalAmountByCategory.length > 0 &&
+                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 col-span-4'}>
+                        <ul>
+                            {
+                                data.totalAmountByCategory.map(el => (
+                                    <li key={el.name} className='flex items-center gap-3 w-full'>
+                                        <div style={{ backgroundColor: el.color }} className={`w-[15px] h-[15px] rounded-xl`}></div>
+                                        <p className='flex justify-between w-full'> {el.name}: <span className='text-xl ml-10 font-bold'>{el.value}</span></p>
+                                    </li>
+                                ))
+                            }
+                        </ul>
                         <CategoriesChart data={data.totalAmountByCategory}/>
                     </div>
-                </>
+                }
+                {
+                    data?.totalAmountByPaymentMethod && data.totalAmountByPaymentMethod.length > 0 &&
+                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 col-span-3'}>
+                        <PaymentMethodsChart data={data.totalAmountByPaymentMethod} xKey='title' yKey='totalAmount' />
+                    </div>
+                }
+            </div>
 
-            }
         </div>
     );
 }

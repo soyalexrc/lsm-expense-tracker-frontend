@@ -1,7 +1,7 @@
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Rectangle} from 'recharts';
 import {TotalAmountByDay} from "@/common/interfaces/expense.ts";
 
-export default function CustomLineChart({data, xKey, yKey}: { data: TotalAmountByDay[], xKey: string, yKey: string}) {
+export default function DateBasedChart({data, xKey, yKey}: { data: TotalAmountByDay[], xKey: string, yKey: string}) {
     return (
         <ResponsiveContainer width="100%" height="100%">
             <BarChart

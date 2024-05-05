@@ -29,15 +29,21 @@ export interface Category {
 export interface GetTotalsResult {
     totalAmount: number
     totalAmountByCategory: TotalAmountByCategory[],
-    totalAmountByDay: TotalAmountByDay[]
+    totalAmountByDay: TotalAmountByDay[],
+    totalAmountByPaymentMethod: TotalAmountByPaymentMethod[]
 }
 
 export interface TotalAmountByCategory {
-    totalAmount: number;
-    category: string
+    value: number;
+    name: string;
+    color: string;
 }
 
 export interface TotalAmountByDay {
     totalAmount: number;
     date: string
+}
+export interface TotalAmountByPaymentMethod {
+    totalAmount: number;
+    title: string
 }
