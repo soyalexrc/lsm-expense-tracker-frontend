@@ -15,6 +15,7 @@ import {
     SelectValue
 } from "@/components/ui/select.tsx";
 import CustomLineChart from "@/components/expenses/CustomLineChart.tsx";
+import CategoriesChart from "@/components/expenses/CategoriesChart.tsx";
 
 
 export default function DashboardPage() {
@@ -24,7 +25,7 @@ export default function DashboardPage() {
     const [week, setWeek] = useState<string>('');
     const [date, setDate] = useState<DateRange | undefined>(getDateRangeByMonth(Number(year), Number(month)))
 
-    const {error, data, isLoading, refetch, } = useQuery({
+    const {error, data, isLoading, refetch } = useQuery({
         queryKey: ['totals'],
         queryFn: () => getTotals({
             userId: userId!,
@@ -33,13 +34,27 @@ export default function DashboardPage() {
         })
     });
 
-    function onDateChange(value: string, type: 'year' | 'month') {
+    function onDateChange(value: string, type: 'year' | 'month' | 'week') {
         if (type === 'month') {
             setMonth(value);
             setDate(getDateRangeByMonth(Number(year), Number(value)))
-        } else {
+        } else if (type === 'year') {
             setYear(value);
             setDate(getDateRangeByMonth(Number(value), Number(month)))
+        } else {
+            if (value === 'full month') {
+                setWeek('')
+                setDate(getDateRangeByMonth(Number(year), Number(month)));
+                return;
+            }
+            setWeek(value);
+            const dateFromByWeek = new Date(value.split(' to ')[0]).setFullYear(Number(year))
+            const dateToByWeek = new Date(value.split(' to ')[1]).setFullYear(Number(year))
+
+            setDate({
+                from: new Date(dateFromByWeek),
+                to: new Date(dateToByWeek),
+            })
 
         }
     }
@@ -82,13 +97,14 @@ export default function DashboardPage() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select>
+                <Select disabled={!month} value={week} onValueChange={(value) => onDateChange(value, 'week')}>
                     <SelectTrigger className='col-span-2'>
                         <SelectValue placeholder="Select a week"/>
                     </SelectTrigger>
                     <SelectContent >
                         <SelectGroup>
                             <SelectLabel>Weeks</SelectLabel>
+                            <SelectItem value='full month'>Full month</SelectItem>
                             {
                                 getWeeksInMonth(Number(year), Number(month))?.map(week => (
                                     <SelectItem key={week.text}
@@ -106,9 +122,15 @@ export default function DashboardPage() {
             </div>
             {
                 data?.totalAmountByDay && data.totalAmountByDay.length > 0 &&
-                <div className={'shadow border rounded-sm p-5 w-full h-[450px]'}>
-                    <CustomLineChart yKey='totalAmount' xKey='date' data={data!.totalAmountByDay}/>
-                </div>
+                <>
+                    <div className={'shadow border rounded-sm p-5 w-full h-[450px]'}>
+                        <CustomLineChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
+                    </div>
+                    <div className={'shadow border rounded-sm p-5 w-[550px] h-[500px]'}>
+                        <CategoriesChart data={data.totalAmountByCategory}/>
+                    </div>
+                </>
+
             }
         </div>
     );

@@ -1,10 +1,10 @@
-import {LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer} from 'recharts';
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Rectangle} from 'recharts';
 import {TotalAmountByDay} from "@/common/interfaces/expense.ts";
 
 export default function CustomLineChart({data, xKey, yKey}: { data: TotalAmountByDay[], xKey: string, yKey: string}) {
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <BarChart
                 width={500}
                 height={300}
                 data={data}
@@ -18,8 +18,8 @@ export default function CustomLineChart({data, xKey, yKey}: { data: TotalAmountB
                 <XAxis dataKey={xKey} interval={0} angle={-40} textAnchor='end' />
                 <YAxis dataKey={yKey}/>
                 <Tooltip/>
-                <Line type="natural" dataKey={yKey} stroke="#8884d8" activeDot={{r: 8}}/>
-            </LineChart>
+                <Bar dataKey={yKey} fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
+            </BarChart>
         </ResponsiveContainer>
     );
 }

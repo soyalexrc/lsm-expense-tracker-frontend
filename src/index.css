@@ -150,3 +150,8 @@ button:focus-visible {
         @apply bg-background text-foreground;
     }
 }
+
+.pie-row .pie-wrap > div {
+    background: red;
+    margin: 0 auto;
+}
