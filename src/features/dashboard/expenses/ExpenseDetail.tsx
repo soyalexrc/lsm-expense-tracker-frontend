@@ -123,7 +123,7 @@ export default function ExpenseDetailPage() {
     return (
         <>
             <Helmet>
-                <title>LSM Expense Tracker - {id ? form.getValues('title') : 'New Expense'}</title>
+                <title>LSM Expense Tracker - {id !== 'null' ? form.getValues('title') : 'New Expense'}</title>
             </Helmet>
             {categoriesError && (
                 <Alert variant="destructive">
