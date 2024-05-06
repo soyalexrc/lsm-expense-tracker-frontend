@@ -17,6 +17,7 @@ import {
 import DateBasedChart from "@/components/expenses/DateBasedChart.tsx";
 import CategoriesChart from "@/components/expenses/CategoriesChart.tsx";
 import PaymentMethodsChart from "@/components/expenses/PaymentMethodsChart.tsx";
+import {Helmet} from "react-helmet";
 
 
 export default function DashboardPage() {
@@ -70,6 +71,9 @@ export default function DashboardPage() {
     if (error) 'An error ocurred...'
     return (
         <div>
+            <Helmet>
+                <title>LSM Expense Tracker - Dashboard</title>
+            </Helmet>
             <div className="grid grid-cols-12 gap-3">
                 <Select value={year} onValueChange={(value) => onDateChange(value, 'year')}>
                     <SelectTrigger className='col-span-2'>

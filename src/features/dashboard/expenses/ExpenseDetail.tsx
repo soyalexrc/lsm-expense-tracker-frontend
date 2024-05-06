@@ -29,6 +29,7 @@ import {useAuth} from "@clerk/clerk-react";
 import {useEffect} from "react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {getUserSettingsByUserId} from "@/api/user-settings.ts";
+import {Helmet} from "react-helmet";
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -121,6 +122,9 @@ export default function ExpenseDetailPage() {
     )
     return (
         <>
+            <Helmet>
+                <title>LSM Expense Tracker - {id ? form.getValues('title') : 'New Expense'}</title>
+            </Helmet>
             {categoriesError && (
                 <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />

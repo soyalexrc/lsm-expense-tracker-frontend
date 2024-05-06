@@ -21,6 +21,7 @@ import {useAuth} from "@clerk/clerk-react";
 import {useState} from "react";
 import {DateRange} from "react-day-picker";
 import {getUserSettingsByUserId} from "@/api/user-settings.ts";
+import {Helmet} from "react-helmet";
 
 export default function ExpensesPage() {
     const {userId} = useAuth();
@@ -61,6 +62,9 @@ export default function ExpensesPage() {
 
     return (
         <div>
+            <Helmet>
+                <title>LSM Expense Tracker - Expenses</title>
+            </Helmet>
             <div className={'grid grid-cols-5 gap-4 mb-10'}>
                 <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
