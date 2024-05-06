@@ -47,3 +47,12 @@ export interface TotalAmountByPaymentMethod {
     totalAmount: number;
     title: string
 }
+
+export interface GetByUserIdWithFilters {
+    title?: string,
+    userId: string,
+    dateFrom?: string,
+    dateTo?: string,
+    categoryId?: string,
+    paymentMethod?: string,
+}

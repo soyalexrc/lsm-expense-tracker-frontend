@@ -148,7 +148,7 @@ export default function DashboardLayout() {
                     <div className="w-full flex-1" />
                     <UserButton/>
                 </header>
-                <main className="p-4 lg:p-6">
+                <main className="p-4 lg:p-6 overflow-y-auto h-screen">
                     <Outlet />
                 </main>
             </div>
