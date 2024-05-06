@@ -4,7 +4,7 @@ import {getTotals} from "@/api/expenses.tsx";
 import {DateRange} from "react-day-picker";
 import {useState} from "react";
 import {Button} from "@/components/ui/button.tsx";
-import {getDateRangeByMonth, getPastTenYears, getWeeksInMonth, MONTHS} from "@/lib/helpers/date.ts";
+import {getDateRangeByMonth, getDateRangeByYear, getPastTenYears, getWeeksInMonth, MONTHS} from "@/lib/helpers/date.ts";
 import {
     Select,
     SelectContent,
@@ -37,6 +37,11 @@ export default function DashboardPage() {
 
     function onDateChange(value: string, type: 'year' | 'month' | 'week') {
         if (type === 'month') {
+            if (value === 'full year') {
+                setMonth('');
+                setDate(getDateRangeByYear(Number(year)));
+                return;
+            }
             setMonth(value);
             setDate(getDateRangeByMonth(Number(year), Number(value)))
         } else if (type === 'year') {
@@ -89,6 +94,7 @@ export default function DashboardPage() {
                     <SelectContent >
                         <SelectGroup>
                             <SelectLabel>Months</SelectLabel>
+                            <SelectItem value='full year'>Full year</SelectItem>
                             {
                                 MONTHS?.map(month => (
                                     <SelectItem key={month.name}

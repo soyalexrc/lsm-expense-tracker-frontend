@@ -151,7 +151,6 @@ button:focus-visible {
     }
 }
 
-.pie-row .pie-wrap > div {
-    background: red;
-    margin: 0 auto;
+html {
+    overflow-x: hidden;
 }

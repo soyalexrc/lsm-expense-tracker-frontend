@@ -13,6 +13,21 @@ export function getDateRangeByMonth(year: number, month: number): DateRange {
     };
 }
 
+export function getDateRangeByYear(year: number): DateRange {
+    // Validate year
+    if (isNaN(year) || year < 1) {
+        throw new Error('Invalid year. Year must be a positive integer.');
+    }
+
+    const firstDay = new Date(year, 0, 1); // Jan 1st
+    const lastDay = new Date(year, 11, 31); // Dec 31st
+
+    return {
+        from: firstDay,
+        to: lastDay,
+    };
+}
+
 export const MONTHS: Month[] = [
     { name: 'January', value: 0 },
     { name: 'February', value: 1 },

@@ -15,7 +15,7 @@ export default function DateBasedChart({data, xKey, yKey}: { data: TotalAmountBy
                     bottom: 80,
                 }}
             >
-                <XAxis dataKey={xKey} interval={0} angle={-40} textAnchor='end' />
+                <XAxis dataKey={xKey}  angle={-40} textAnchor='end' />
                 <YAxis dataKey={yKey}/>
                 <Tooltip/>
                 <Bar dataKey={yKey} fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />

@@ -32,7 +32,7 @@ import {getUserSettingsByUserId} from "@/api/user-settings.ts";
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
-    description: z.string(),
+    description: z.string().optional(),
     date: z.date(),
     category: z.string().min(1, 'Category is required'),
     paymentMethod: z.string().min(1, 'Payment method is required'),
@@ -105,7 +105,6 @@ export default function ExpenseDetailPage() {
             form.setValue('date', data?.date ? new Date(data.date) : new Date())
             form.setValue('amount', data?.amount?.toString() ?? '')
         }
-        console.log('data', form);
     }, [data]);
 
 
@@ -155,7 +154,7 @@ export default function ExpenseDetailPage() {
                                         <FormItem className='flex-1'>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Title" {...field} />
+                                                <Input autoFocus={true} placeholder="Title" {...field} />
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>

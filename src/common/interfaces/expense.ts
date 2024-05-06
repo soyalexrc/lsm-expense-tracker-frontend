@@ -14,7 +14,7 @@ export interface CreateExpense {
     amount: number;
     title: string
     date: string | Date;
-    description: string;
+    description?: string;
     category: string;
     userId: string | null | undefined;
     paymentMethod: string;

@@ -95,7 +95,7 @@ export default function ExpensesPage() {
             </div>
             <div className='flex justify-between items-end my-3'>
                 <p className={'text-gray-500 text-sm'}><b>{data?.length} </b>registros</p>
-                <Button onClick={() => navigate('/expenses/null')}>
+                <Button onClick={() => navigate('/expenses/null')} autoFocus={true}>
                     <Plus className='mr-2'/>
                     New Expense
                 </Button>
