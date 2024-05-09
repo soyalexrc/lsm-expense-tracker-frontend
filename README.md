@@ -29,3 +29,13 @@ export default {
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 # lsm-expense-tracker-frontend
+
+
+# deploy on mac machine
+2. `docker stop $(docker ps | grep 'lsm-expense-tracker-frontend:latest' | awk '{print $1}')`
+
+3. `docker rm $(docker ps -a | grep 'lsm-expense-tracker-frontend:latest' | awk '{print $1}')`
+
+4. `docker image rm $(docker image ls | grep 'pruebacontainerluighi2693/lsm-expense-tracker-frontend' | grep -v 'site' | awk '{print $3}')`
+
+5. `docker run -d -p 5473:80 pruebacontainerluighi2693/lsm-expense-tracker-frontend:latest`
