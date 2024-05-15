@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const baseURL = 'http://dny15158.macincloud.com:3001/api/v1';
+const baseURL = 'http://localhost:3001/api/v1';
+// const baseURL = 'http://dny15158.macincloud.com:3001/api/v1';
 
 // function createCookieInterceptor() {
 //
