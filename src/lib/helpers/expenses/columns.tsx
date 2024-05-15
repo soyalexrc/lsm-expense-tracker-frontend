@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog.tsx";
 import {useQueryClient} from "react-query";
 import {deleteExpense} from "@/api/expenses.tsx";
+import ExpenseForm from "@/components/expenses/ExpenseForm.tsx";
 
 
 export const columns: ColumnDef<Expense>[] = [
@@ -69,9 +70,7 @@ export const columns: ColumnDef<Expense>[] = [
 
             return (
                 <div className='flex items-center gap-3'>
-                    <Button onClick={() => navigate(`/expenses/${expense._id}`)} variant="outline" size="sm">
-                        <Pencil className="h-4 w-4" />
-                    </Button>
+                    <ExpenseForm id={expense._id} />
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button variant="outline" size="sm">

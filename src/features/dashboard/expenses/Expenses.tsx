@@ -3,8 +3,7 @@ import {getExpensesByUserId} from "@/api/expenses.tsx";
 import {DataTable} from "@/lib/helpers/expenses/datatable.tsx";
 import {columns} from "@/lib/helpers/expenses/columns.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {Plus, Search} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {Search} from "lucide-react";
 import {Input} from "@/components/ui/input.tsx";
 import {DatePicker} from "@/components/expenses/DatePicker.tsx";
 import {getCategories} from "@/api/categories.ts";
@@ -22,10 +21,10 @@ import {useState} from "react";
 import {DateRange} from "react-day-picker";
 import {getUserSettingsByUserId} from "@/api/user-settings.ts";
 import {Helmet} from "react-helmet";
+import ExpenseForm from "@/components/expenses/ExpenseForm.tsx";
 
 export default function ExpensesPage() {
     const {userId} = useAuth();
-    const navigate = useNavigate();
     const [date, setDate] = useState<DateRange | undefined>(undefined)
     const [title, setTitle] = useState<string>('');
     const [category, setCategory] = useState<string>('');
@@ -66,7 +65,7 @@ export default function ExpensesPage() {
                 <title>LSM Expense Tracker - Expenses</title>
             </Helmet>
             <div className={'grid grid-cols-5 gap-4 mb-10'}>
-                <div className="relative">
+                <div className="relative sm:col-span-1 col-span-5">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
                     <Input
                         type="search"
@@ -76,9 +75,9 @@ export default function ExpensesPage() {
                         className="w-full appearance-none bg-background pl-8 shadow-none "
                     />
                 </div>
-                <DatePicker date={date} setDate={setDate} className=''/>
+                <DatePicker date={date} setDate={setDate} className='sm:col-span-1 col-span-5'/>
                 <Select disabled={cLoading || Boolean(cError)} value={category} onValueChange={(value) => value === 'all' ? setCategory('') : setCategory(value)}>
-                    <SelectTrigger className=''>
+                    <SelectTrigger className='sm:col-span-1 col-span-5'>
                         <SelectValue placeholder="Select a category"/>
                     </SelectTrigger>
                     <SelectContent>
@@ -95,7 +94,7 @@ export default function ExpensesPage() {
                     </SelectContent>
                 </Select>
                 <Select disabled={Boolean(sError) || sLoading} value={paymentMethod} onValueChange={(value) => value === 'all' ? setPaymentMethod('') : setPaymentMethod(value)}>
-                    <SelectTrigger className=''>
+                    <SelectTrigger className='sm:col-span-1 col-span-5'>
                         <SelectValue placeholder="Select a payment method"/>
                     </SelectTrigger>
                     <SelectContent>
@@ -111,15 +110,13 @@ export default function ExpensesPage() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button onClick={() => refetch()}>Search</Button>
+                <Button className='sm:col-span-1 col-span-5' onClick={() => refetch()}>Search</Button>
             </div>
             <div className='flex justify-between items-end my-3'>
                 <p className={'text-gray-500 text-sm'}><b>{data?.length} </b>registros</p>
-                <Button onClick={() => navigate('/expenses/null')} autoFocus={true}>
-                    <Plus className='mr-2'/>
-                    New Expense
-                </Button>
+                <ExpenseForm  id='null' />
             </div>
+
             <DataTable columns={columns} data={data ?? []}/>
         </div>
     )
