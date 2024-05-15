@@ -18,6 +18,9 @@ import DateBasedChart from "@/components/expenses/DateBasedChart.tsx";
 import CategoriesChart from "@/components/expenses/CategoriesChart.tsx";
 import PaymentMethodsChart from "@/components/expenses/PaymentMethodsChart.tsx";
 import {Helmet} from "react-helmet";
+import useSize from "@/lib/hooks/useSize.ts";
+
+const BREAKPOINT = 756;
 
 
 export default function DashboardPage() {
@@ -25,6 +28,7 @@ export default function DashboardPage() {
     const [year, setYear] = useState<string>(String(new Date().getFullYear()));
     const [month, setMonth] = useState<string>(String(new Date().getMonth()));
     const [week, setWeek] = useState<string>('');
+    const windowSize = useSize()
     const [date, setDate] = useState<DateRange | undefined>(getDateRangeByMonth(Number(year), Number(month)))
 
     const {error, data, isLoading, refetch } = useQuery({
@@ -76,7 +80,7 @@ export default function DashboardPage() {
             </Helmet>
             <div className="grid grid-cols-12 gap-3">
                 <Select value={year} onValueChange={(value) => onDateChange(value, 'year')}>
-                    <SelectTrigger className='col-span-2'>
+                    <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a year"/>
                     </SelectTrigger>
                     <SelectContent >
@@ -92,7 +96,7 @@ export default function DashboardPage() {
                     </SelectContent>
                 </Select>
                 <Select value={month} onValueChange={(value) => onDateChange(value, 'month')}>
-                    <SelectTrigger className='col-span-2'>
+                    <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a month"/>
                     </SelectTrigger>
                     <SelectContent >
@@ -109,7 +113,7 @@ export default function DashboardPage() {
                     </SelectContent>
                 </Select>
                 <Select disabled={!month} value={week} onValueChange={(value) => onDateChange(value, 'week')}>
-                    <SelectTrigger className='col-span-2'>
+                    <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a week"/>
                     </SelectTrigger>
                     <SelectContent >
@@ -125,7 +129,7 @@ export default function DashboardPage() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button className='col-span-2' variant='secondary' onClick={() => refetch()}>Search</Button>
+                <Button className='md:col-span-2 col-span-12' variant='secondary' onClick={() => refetch()}>Search</Button>
             </div>
             <div className={' p-4'}>
                 <p className={'text-sm text-gray-500 font-bold mb-2'}>Total overall</p>
@@ -133,14 +137,14 @@ export default function DashboardPage() {
             </div>
             {
                 data?.totalAmountByDay && data.totalAmountByDay.length > 0 &&
-                    <div className={'shadow border rounded-sm p-5 w-full h-[450px]'}>
+                    <div className={'shadow border rounded-sm md:p-5 pt-5 w-full h-[450px]'}>
                         <DateBasedChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
                     </div>
             }
             <div className="grid grid-cols-7 gap-5">
                 {
                     data?.totalAmountByCategory && data.totalAmountByCategory.length > 0 &&
-                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 col-span-4'}>
+                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex md:flex-row flex-col mt-5 md:col-span-4 col-span-7'}>
                         <ul>
                             {
                                 data.totalAmountByCategory.map(el => (
@@ -151,12 +155,18 @@ export default function DashboardPage() {
                                 ))
                             }
                         </ul>
-                        <CategoriesChart data={data.totalAmountByCategory}/>
+                        <CategoriesChart
+                            data={data.totalAmountByCategory}
+                            innerRadius={windowSize[0] < BREAKPOINT ? 90 : 140}
+                            outerRadius={windowSize[0] < BREAKPOINT ? 120 : 180}
+                            cx={windowSize[0] < BREAKPOINT ? 145 : 250}
+                            cy={windowSize[0] < BREAKPOINT ? 170 : 230}
+                        />
                     </div>
                 }
                 {
                     data?.totalAmountByPaymentMethod && data.totalAmountByPaymentMethod.length > 0 &&
-                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 col-span-3'}>
+                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 md:col-span-3 col-span-7'}>
                         <PaymentMethodsChart data={data.totalAmountByPaymentMethod} xKey='title' yKey='totalAmount' />
                     </div>
                 }
