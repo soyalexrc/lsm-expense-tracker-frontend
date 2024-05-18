@@ -30,7 +30,12 @@ export default {
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 # lsm-expense-tracker-frontend
 
+## build image
 
+`docker build --platform linux/amd64 -t pruebacontainerluighi2693/lsm-expense-tracker-frontend:latest .`
+## push dockerhub
+
+1. `docker push pruebacontainerluighi2693/lsm-expense-tracker-frontend:latest`
 # deploy on mac machine
 2. `docker stop $(docker ps | grep 'lsm-expense-tracker-frontend:latest' | awk '{print $1}')`
 
