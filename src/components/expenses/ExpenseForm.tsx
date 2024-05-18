@@ -66,8 +66,8 @@ export default function ExpenseForm({data}: Props) {
     const {data: categories, isLoading: categoriesLoading, error: categoriesError} = useGetAllCategoriesQuery();
     const {error: usError, data: usData, isLoading: usLoading} = useGetUserSettingsByUserIdQuery({userId: userId!})
 
-    const [addExpense, { isLoading, isSuccess, isError }] = useAddExpenseMutation();
-    const [updateExpense, { isLoading: uLoading, isSuccess: uSuccess, isError: uError }] = useUpdateExpenseMutation()
+    const [addExpense, {  isSuccess }] = useAddExpenseMutation();
+    const [updateExpense, { isSuccess: uSuccess }] = useUpdateExpenseMutation()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),

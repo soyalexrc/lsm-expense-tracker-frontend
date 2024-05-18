@@ -6,6 +6,8 @@ import {
     GetTotalsResult,
     UpdateExpense
 } from "@/common/interfaces/expense.ts";
+// @ts-expect-error No se encuentra el modulo
+import {FullTagDescription} from "@reduxjs/toolkit/dist/query/endpointDefinitions";
 const BASE_URL = 'http://localhost:3001/api/v1/'
 
 export const expensesApi = createApi({
@@ -26,7 +28,7 @@ export const expensesApi = createApi({
                         {type: 'Expenses', id: 'LIST'},
                     ]
                     : // an error occurred, but we still want to refetch this query when `{ type: 'Expenses', id: 'LIST' }` is invalidated
-                    [{ type: 'Expenses', id: 'LIST' }]
+                    [{ type: 'Expenses', id: 'LIST' }] as FullTagDescription<never>
         }),
         addExpense: builder.mutation<CreateExpense, Partial<CreateExpense>>({
             query: (body) => ({
@@ -34,7 +36,7 @@ export const expensesApi = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: [{ type: 'Expenses', id: 'LIST' }, { type: 'Totals' }],
+            invalidatesTags: [{ type: 'Expenses' as never, id: 'LIST' }, { type: 'Totals' as never }],
         }),
         updateExpense: builder.mutation<UpdateExpense, Partial<UpdateExpense>>({
             query: (body) => ({
@@ -42,14 +44,14 @@ export const expensesApi = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: [{ type: 'Expenses', id: 'LIST' }, { type: 'Totals' }],
+            invalidatesTags: [{ type: 'Expenses' as never, id: 'LIST' }, { type: 'Totals' as never}],
         }),
         deleteExpense: builder.mutation<UpdateExpense, string>({
             query: (id) => ({
                 url: `expense/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: [{ type: 'Expenses', id: 'LIST' }, { type: 'Totals' }],
+            invalidatesTags: [{ type: 'Expenses' as never, id: 'LIST' }, { type: 'Totals' as never}],
         }),
         getTotals: builder.query<GetTotalsResult, { userId: string, dateFrom: string; dateTo: string }> ({
             query: (body) => ({
@@ -57,7 +59,7 @@ export const expensesApi = createApi({
                 method: 'POST',
                 body
             }),
-            providesTags: () =>  ['Totals']
+            providesTags: () =>  ['Totals'] as FullTagDescription<never>
         })
     })
 })

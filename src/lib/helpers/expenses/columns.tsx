@@ -3,18 +3,6 @@ import {ColumnDef} from "@tanstack/react-table";
 import {Category, Expense} from "@/common/interfaces/expense.ts";
 import {format} from "date-fns";
 import {Badge} from "@/components/ui/badge.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import { Pencil, Trash2} from "lucide-react";
-import {useNavigate} from "react-router-dom";
-import {
-    AlertDialog, AlertDialogAction, AlertDialogCancel,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogContent, AlertDialogTitle, AlertDialogTrigger
-} from "@/components/ui/alert-dialog.tsx";
-import {useQueryClient} from "react-query";
-import {deleteExpense} from "@/api/expenses.tsx";
 import ExpenseForm from "@/components/expenses/ExpenseForm.tsx";
 import DeleteExpenseButton from "@/lib/helpers/expenses/DeleteExpenseButton.tsx";
 

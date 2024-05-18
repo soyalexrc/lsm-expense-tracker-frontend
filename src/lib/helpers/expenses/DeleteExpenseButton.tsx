@@ -19,7 +19,7 @@ interface Props {
 
 export default function DeleteExpenseButton({id}: Props) {
     const [open, setOpen] = useState<boolean>(false)
-    const [ deleteExpense, { isLoading, isSuccess, isError } ] = useDeleteExpenseMutation();
+    const [ deleteExpense, { isSuccess } ] = useDeleteExpenseMutation();
 
     useEffect(() => {
         if (isSuccess) {

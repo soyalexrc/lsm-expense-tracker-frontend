@@ -1,5 +1,3 @@
-import {useQuery} from "react-query";
-import {getUserSettingsByUserId} from "@/api/user-settings.ts";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircle, Pencil, Trash2} from "lucide-react";
 import {useAuth} from "@clerk/clerk-react";
