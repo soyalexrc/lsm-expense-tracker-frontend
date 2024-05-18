@@ -20,6 +20,10 @@ export interface CreateExpense {
     paymentMethod: string;
 }
 
+export interface UpdateExpense extends CreateExpense {
+    id: string;
+}
+
 export interface Category {
     _id: string;
     title: string;

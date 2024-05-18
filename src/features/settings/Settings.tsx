@@ -5,13 +5,13 @@ import {AlertCircle, Pencil, Trash2} from "lucide-react";
 import {useAuth} from "@clerk/clerk-react";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {useGetUserSettingsByUserIdQuery} from "@/lib/store/services/userSettings.ts";
 
 export default function SettingsPage() {
     const { userId } = useAuth();
 
-    const {error, data, isLoading} = useQuery({
-        queryKey: ['userSettings'],
-        queryFn: () => getUserSettingsByUserId(userId!)
+    const {error, data, isLoading} = useGetUserSettingsByUserIdQuery({
+        userId: userId!
     })
 
     if (isLoading) return 'Loading...'

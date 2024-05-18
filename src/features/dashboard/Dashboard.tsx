@@ -1,9 +1,6 @@
 import {useAuth} from "@clerk/clerk-react";
-import {useQuery} from "react-query";
-import {getTotals} from "@/api/expenses.tsx";
 import {DateRange} from "react-day-picker";
 import {useState} from "react";
-import {Button} from "@/components/ui/button.tsx";
 import {getDateRangeByMonth, getDateRangeByYear, getPastTenYears, getWeeksInMonth, MONTHS} from "@/lib/helpers/date.ts";
 import {
     Select,
@@ -19,6 +16,7 @@ import CategoriesChart from "@/components/expenses/CategoriesChart.tsx";
 import PaymentMethodsChart from "@/components/expenses/PaymentMethodsChart.tsx";
 import {Helmet} from "react-helmet";
 import useSize from "@/lib/hooks/useSize.ts";
+import {useGetTotalsQuery} from "@/lib/store/services/expenses.ts";
 
 const BREAKPOINT = 756;
 
@@ -31,13 +29,10 @@ export default function DashboardPage() {
     const windowSize = useSize()
     const [date, setDate] = useState<DateRange | undefined>(getDateRangeByMonth(Number(year), Number(month)))
 
-    const {error, data, isLoading, refetch } = useQuery({
-        queryKey: ['totals'],
-        queryFn: () => getTotals({
-            userId: userId!,
-            dateFrom: date?.from ? date.from.toDateString() : '',
-            dateTo: date?.to ? date.to.toDateString() : '',
-        })
+    const {error, data, isLoading} = useGetTotalsQuery({
+        userId: userId!,
+        dateFrom: date?.from ? date.from.toDateString() : '',
+        dateTo: date?.to ? date.to.toDateString() : '',
     });
 
     function onDateChange(value: string, type: 'year' | 'month' | 'week') {
@@ -83,7 +78,7 @@ export default function DashboardPage() {
                     <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a year"/>
                     </SelectTrigger>
-                    <SelectContent >
+                    <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Years</SelectLabel>
                             {
@@ -99,7 +94,7 @@ export default function DashboardPage() {
                     <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a month"/>
                     </SelectTrigger>
-                    <SelectContent >
+                    <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Months</SelectLabel>
                             <SelectItem value='full year'>Full year</SelectItem>
@@ -116,7 +111,7 @@ export default function DashboardPage() {
                     <SelectTrigger className='md:col-span-2 col-span-12'>
                         <SelectValue placeholder="Select a week"/>
                     </SelectTrigger>
-                    <SelectContent >
+                    <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Weeks</SelectLabel>
                             <SelectItem value='full month'>Full month</SelectItem>
@@ -129,7 +124,8 @@ export default function DashboardPage() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button className='md:col-span-2 col-span-12' variant='secondary' onClick={() => refetch()}>Search</Button>
+                {/*<Button className='md:col-span-2 col-span-12' variant='secondary'*/}
+                {/*        onClick={() => refetch()}>Search</Button>*/}
             </div>
             <div className={' p-4'}>
                 <p className={'text-sm text-gray-500 font-bold mb-2'}>Total overall</p>
@@ -137,20 +133,23 @@ export default function DashboardPage() {
             </div>
             {
                 data?.totalAmountByDay && data.totalAmountByDay.length > 0 &&
-                    <div className={'shadow border rounded-sm md:p-5 pt-5 w-full h-[450px]'}>
-                        <DateBasedChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
-                    </div>
+                <div className={'shadow border rounded-sm md:p-5 pt-5 w-full h-[450px]'}>
+                    <DateBasedChart yKey='totalAmount' xKey='date' data={data.totalAmountByDay}/>
+                </div>
             }
             <div className="grid grid-cols-7 gap-5">
                 {
                     data?.totalAmountByCategory && data.totalAmountByCategory.length > 0 &&
-                    <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex md:flex-row flex-col mt-5 md:col-span-4 col-span-7'}>
+                    <div
+                        className={'shadow border rounded-sm p-5 w-full h-[500px] flex md:flex-row flex-col mt-5 md:col-span-4 col-span-7'}>
                         <ul>
                             {
                                 data.totalAmountByCategory.map(el => (
                                     <li key={el.name} className='flex items-center gap-3 w-full'>
-                                        <div style={{ backgroundColor: el.color }} className={`w-[15px] h-[15px] rounded-xl`}></div>
-                                        <p className='flex justify-between w-full'> {el.name}: <span className='text-xl ml-10 font-bold'>{el.value}</span></p>
+                                        <div style={{backgroundColor: el.color}}
+                                             className={`w-[15px] h-[15px] rounded-xl`}></div>
+                                        <p className='flex justify-between w-full'> {el.name}: <span
+                                            className='text-xl ml-10 font-bold'>{el.value}</span></p>
                                     </li>
                                 ))
                             }
@@ -167,7 +166,7 @@ export default function DashboardPage() {
                 {
                     data?.totalAmountByPaymentMethod && data.totalAmountByPaymentMethod.length > 0 &&
                     <div className={'shadow border rounded-sm p-5 w-full h-[500px] flex mt-5 md:col-span-3 col-span-7'}>
-                        <PaymentMethodsChart data={data.totalAmountByPaymentMethod} xKey='title' yKey='totalAmount' />
+                        <PaymentMethodsChart data={data.totalAmountByPaymentMethod} xKey='title' yKey='totalAmount'/>
                     </div>
                 }
             </div>

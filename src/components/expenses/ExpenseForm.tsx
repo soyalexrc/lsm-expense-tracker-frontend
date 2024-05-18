@@ -11,11 +11,7 @@ import {Input} from "@/components/ui/input"
 import {AlertCircle, CalendarIcon, Pencil, Plus} from "lucide-react";
 import {z} from "zod";
 import {useAuth} from "@clerk/clerk-react";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {getCategories} from "@/api/categories.ts";
-import {createExpense, getExpenseById, updateExpense} from "@/api/expenses.tsx";
-import {getUserSettingsByUserId} from "@/api/user-settings.ts";
-import {CreateExpense} from "@/common/interfaces/expense.ts";
+import {Expense} from "@/common/interfaces/expense.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
@@ -44,6 +40,10 @@ import {
     DrawerTrigger
 } from "@/components/ui/drawer.tsx";
 import useSize from "@/lib/hooks/useSize.ts";
+import {useGetAllCategoriesQuery} from "@/lib/store/services/categories.ts";
+import {useGetUserSettingsByUserIdQuery} from "@/lib/store/services/userSettings.ts";
+import {useAddExpenseMutation, useUpdateExpenseMutation} from "@/lib/store/services/expenses.ts";
+import {toast} from "sonner";
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -55,43 +55,20 @@ const formSchema = z.object({
 })
 
 interface Props {
-    id?: string
+    data: Partial<Expense>
 }
 
-export default function ExpenseForm({id}: Props) {
+export default function ExpenseForm({data}: Props) {
     const {userId} = useAuth();
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false)
-    const [width, height] = useSize()
+    const [width] = useSize()
 
-    const {error: categoriesError, data: categories, isLoading: categoriesLoading} = useQuery({
-        queryKey: ['categories'],
-        queryFn: () => getCategories()
-    });
-    const {error, data, isLoading} = useQuery({
-        queryKey: ['expense'],
-        staleTime: 0,
-        enabled: id !== 'null',
-        queryFn: () => getExpenseById(id!)
-    })
-    const {error: usError, data: usData, isLoading: usLoading} = useQuery({
-        queryKey: ['userSettings'],
-        queryFn: () => getUserSettingsByUserId(userId!)
-    })
-    const updateExpenseMutation = useMutation({
-        mutationFn: (expense: CreateExpense) => updateExpense(id!, expense, () => setOpen(false)),
-        onSuccess: () => onSuccessMutation()
-    })
+    const {data: categories, isLoading: categoriesLoading, error: categoriesError} = useGetAllCategoriesQuery();
+    const {error: usError, data: usData, isLoading: usLoading} = useGetUserSettingsByUserIdQuery({userId: userId!})
 
-    const createExpenseMutation = useMutation({
-        mutationFn: (expense: CreateExpense) => createExpense( expense, () => setOpen(false)),
-        onSuccess: () => onSuccessMutation()
-    })
+    const [addExpense, { isLoading, isSuccess, isError }] = useAddExpenseMutation();
+    const [updateExpense, { isLoading: uLoading, isSuccess: uSuccess, isError: uError }] = useUpdateExpenseMutation()
 
-    async function onSuccessMutation() {
-        await queryClient.invalidateQueries({ queryKey: ['expenses'] })
-        await queryClient.invalidateQueries({ queryKey: ['expense'] })
-    }
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     })
@@ -102,10 +79,10 @@ export default function ExpenseForm({id}: Props) {
             userId
         }
         try {
-            if (id !== 'null') {
-                updateExpenseMutation.mutate(payload)
+            if (data._id !== 'null') {
+                updateExpense({...payload, id: data._id})
             } else {
-                createExpenseMutation.mutate(payload);
+                addExpense(payload);
             }
             form.reset();
         } catch (e) {
@@ -114,7 +91,14 @@ export default function ExpenseForm({id}: Props) {
     }
 
     useEffect(() => {
-        if (id === 'null') {
+        if (isSuccess || uSuccess) {
+            setOpen(false);
+            toast('Se realizo la accion con exito!')
+        }
+    }, [isSuccess, uSuccess]);
+
+    useEffect(() => {
+        if (data._id === 'null') {
             form.reset();
         } else {
             form.setValue('title', data?.title ?? '')
@@ -127,25 +111,13 @@ export default function ExpenseForm({id}: Props) {
     }, [data]);
 
 
-    if (isLoading || categoriesLoading) return 'Loading...'
-
-    if (error) return (
-        <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4"/>
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-                An error has ocurred while loading the expense, please try again.
-            </AlertDescription>
-        </Alert>
-    )
-
     if (width >= 756) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant='outline' autoFocus={true}>
+                    <Button variant='outline' autoFocus={true} size='sm'>
                         {
-                            id == 'null' ?
+                            data._id == 'null' ?
                                 <>
                                     <Plus className='mr-2'/>
                                     New Expense
@@ -156,7 +128,7 @@ export default function ExpenseForm({id}: Props) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>{id == 'null' ? 'New Expense' : 'Edit Expense'}</DialogTitle>
+                        <DialogTitle>{data._id == 'null' ? 'New Expense' : 'Edit Expense'}</DialogTitle>
                         <DialogDescription>
                             Make changes to your profile here. Click save when you're done.
                         </DialogDescription>
@@ -350,9 +322,9 @@ export default function ExpenseForm({id}: Props) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <Button variant='outline' autoFocus={true}>
+                <Button variant='outline' autoFocus={true} size='sm'>
                     {
-                        id == 'null' ?
+                        data._id == 'null' ?
                             <>
                                 <Plus className='mr-2'/>
                                 New Expense
@@ -363,7 +335,7 @@ export default function ExpenseForm({id}: Props) {
             </DrawerTrigger>
             <DrawerContent className="sm:max-w-[425px] px-5">
                 <DrawerHeader>
-                    <DrawerTitle>{id == 'null' ? 'New Expense' : 'Edit Expense'}</DrawerTitle>
+                    <DrawerTitle>{data._id == 'null' ? 'New Expense' : 'Edit Expense'}</DrawerTitle>
                     <DrawerDescription>
                         Make changes to your profile here. Click save when you're done.
                     </DrawerDescription>

@@ -16,6 +16,7 @@ import {
 import {useQueryClient} from "react-query";
 import {deleteExpense} from "@/api/expenses.tsx";
 import ExpenseForm from "@/components/expenses/ExpenseForm.tsx";
+import DeleteExpenseButton from "@/lib/helpers/expenses/DeleteExpenseButton.tsx";
 
 
 export const columns: ColumnDef<Expense>[] = [
@@ -53,44 +54,10 @@ export const columns: ColumnDef<Expense>[] = [
         id: "actions",
         cell: ({ row }) => {
             const expense = row.original
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const navigate = useNavigate();
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const queryClient = useQueryClient();
-
-            async function handleDelete(id: string) {
-                try {
-                    await deleteExpense(id).then(() => {
-                        queryClient.fetchQuery('expenses');
-                    })
-                }catch (e) {
-                    console.log(e);
-                }
-            }
-
             return (
                 <div className='flex items-center gap-3'>
-                    <ExpenseForm id={expense._id} />
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                                <Trash2 className='h-4 w-4'/>
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete your
-                                    account and remove your data from our servers.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(row.original._id)}>Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                    <ExpenseForm data={expense} />
+                    <DeleteExpenseButton id={expense._id} />
                 </div>
             )
         },

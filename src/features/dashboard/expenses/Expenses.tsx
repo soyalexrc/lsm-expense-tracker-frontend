@@ -1,12 +1,9 @@
-import {useQuery} from "react-query";
-import {getExpensesByUserId} from "@/api/expenses.tsx";
+// import {getExpensesByUserId} from "@/api/expenses.tsx";
 import {DataTable} from "@/lib/helpers/expenses/datatable.tsx";
 import {columns} from "@/lib/helpers/expenses/columns.tsx";
-import {Button} from "@/components/ui/button.tsx";
 import {Search} from "lucide-react";
 import {Input} from "@/components/ui/input.tsx";
 import {DatePicker} from "@/components/expenses/DatePicker.tsx";
-import {getCategories} from "@/api/categories.ts";
 import {
     Select,
     SelectContent,
@@ -19,9 +16,11 @@ import {
 import {useAuth} from "@clerk/clerk-react";
 import {useState} from "react";
 import {DateRange} from "react-day-picker";
-import {getUserSettingsByUserId} from "@/api/user-settings.ts";
 import {Helmet} from "react-helmet";
 import ExpenseForm from "@/components/expenses/ExpenseForm.tsx";
+import {useGetExpensesByUserIdQuery} from "@/lib/store/services/expenses.ts";
+import {useGetAllCategoriesQuery} from "@/lib/store/services/categories.ts";
+import {useGetUserSettingsByUserIdQuery} from "@/lib/store/services/userSettings.ts";
 
 export default function ExpensesPage() {
     const {userId} = useAuth();
@@ -29,29 +28,17 @@ export default function ExpensesPage() {
     const [title, setTitle] = useState<string>('');
     const [category, setCategory] = useState<string>('');
     const [paymentMethod, setPaymentMethod] = useState<string>('');
-
-    const {error, data, isLoading, refetch} = useQuery({
-        queryKey: ['expenses'],
-        staleTime: 0,
-        queryFn: () => getExpensesByUserId({
-            userId: userId!,
-            title,
-            categoryId: category,
-            paymentMethod,
-            dateFrom: date?.from ? date.from.toDateString() : '',
-            dateTo: date?.to ? date.to.toDateString() : '',
-
-        })
-    })
-
-    const {error: cError, data: categories, isLoading: cLoading} = useQuery({
-        queryKey: ['categories'],
-        queryFn: () => getCategories()
-    })
-
-    const {error: sError, data: settings, isLoading: sLoading} = useQuery({
-        queryKey: ['userSettings'],
-        queryFn: () => getUserSettingsByUserId(userId!)
+    const { data, isLoading, error } = useGetExpensesByUserIdQuery({
+        userId: userId!,
+        title,
+        categoryId: category,
+        paymentMethod,
+        dateFrom: date?.from ? date.from.toDateString() : '',
+        dateTo: date?.to ? date.to.toDateString() : '',
+    });
+    const { data: categories, isLoading: cLoading, error: cError,  } = useGetAllCategoriesQuery()
+    const {error: sError, data: settings, isLoading: sLoading} = useGetUserSettingsByUserIdQuery({
+        userId: userId!
     })
 
 
@@ -110,13 +97,12 @@ export default function ExpensesPage() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button className='sm:col-span-1 col-span-5' onClick={() => refetch()}>Search</Button>
+                {/*<Button className='sm:col-span-1 col-span-5'>Search</Button>*/}
             </div>
             <div className='flex justify-between items-end my-3'>
                 <p className={'text-gray-500 text-sm'}><b>{data?.length} </b>registros</p>
-                <ExpenseForm  id='null' />
+                <ExpenseForm data={{_id: 'null'}} />
             </div>
-
             <DataTable columns={columns} data={data ?? []}/>
         </div>
     )
